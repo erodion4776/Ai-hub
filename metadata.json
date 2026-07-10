@@ -1,0 +1,6 @@
+{
+  "name": "AI Tutorial Hub",
+  "description": "An AI-powered hub for mastering AI tools with video tutorials, summaries, and affiliate resources.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
