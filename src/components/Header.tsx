@@ -12,6 +12,7 @@ export default function Header({ onLoginClick, user, onLogout, onNavChange }: He
     <header className="py-6 px-6 flex justify-between items-center border-b border-gray-800">
       <div className="text-xl font-bold text-emerald-accent cursor-pointer" onClick={() => onNavChange('home')}>AI Tutorial Hub</div>
       <nav className="flex gap-4 items-center">
+        <button onClick={() => onNavChange('blog')} className="text-gray-300 hover:text-white">Blog</button>
         <button onClick={() => onNavChange('roadmaps')} className="text-gray-300 hover:text-white">Roadmaps</button>
         {user ? (
           <button onClick={onLogout} className="text-gray-300 hover:text-white">Logout</button>

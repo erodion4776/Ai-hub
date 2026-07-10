@@ -12,7 +12,8 @@ import PremiumCTA from './components/PremiumCTA.tsx';
 import AuthModal from './components/AuthModal.tsx';
 import TutorialDetail from './components/TutorialDetail.tsx';
 import Roadmaps from './components/Roadmaps.tsx';
-import RoadmapDetail from './components/RoadmapDetail.tsx';
+import Blog from './components/Blog.tsx';
+import BlogDetail from './components/BlogDetail.tsx';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -20,6 +21,7 @@ export default function App() {
   const [selectedVideo, setSelectedVideo] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedRoadmap, setSelectedRoadmap] = useState<any>(null);
+  const [selectedBlog, setSelectedBlog] = useState<any>(null);
 
   useEffect(() => {
     const supabase = getSupabase();
@@ -50,9 +52,14 @@ export default function App() {
     if (selectedRoadmap) {
       return <RoadmapDetail roadmap={selectedRoadmap} onBack={() => setSelectedRoadmap(null)} />;
     }
+    if (selectedBlog) {
+      return <BlogDetail blog={selectedBlog} onBack={() => setSelectedBlog(null)} />;
+    }
     switch (currentPage) {
       case 'roadmaps':
         return <Roadmaps onRoadmapSelect={setSelectedRoadmap} />;
+      case 'blog':
+        return <Blog onBlogSelect={setSelectedBlog} />;
       case 'home':
       default:
         return (
@@ -72,6 +79,7 @@ export default function App() {
         setCurrentPage(page);
         setSelectedVideo(null);
         setSelectedRoadmap(null);
+        setSelectedBlog(null);
       }} />
       {renderContent()}
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
