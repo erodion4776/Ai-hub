@@ -7,27 +7,52 @@ interface VideoGridProps {
 
 export default function VideoGrid({ onVideoSelect }: VideoGridProps) {
   const [videos, setVideos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchVideos() {
       const supabase = getSupabase();
-      if (!supabase) return;
-      
-      const { data, error } = await supabase.from('videos').select('*');
+      if (!supabase) { setLoading(false); return; }
+
+      const { data, error } = await supabase
+        .from('videos')
+        .select('*')
+        .order('date_added', { ascending: false });
+
+      if (error) console.error('VideoGrid fetch error:', error);
       if (data) setVideos(data);
+      setLoading(false);
     }
     fetchVideos();
   }, []);
-  
+
+  if (loading) {
+    return <section className="py-12 px-6 text-center text-gray-400">Loading tutorials…</section>;
+  }
+
+  if (videos.length === 0) {
+    return <section className="py-12 px-6 text-center text-gray-400">No tutorials yet.</section>;
+  }
+
   return (
     <section className="py-12 px-6">
-      <h2 className="text-3xl font-bold mb-8 text-white">Recommended Tutorials</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {videos.map((video) => (
-          <div key={video.id} className="group bg-gray-900/50 border border-gray-800 p-8 rounded-2xl cursor-pointer hover:border-emerald-accent/50 hover:shadow-2xl hover:shadow-emerald-accent/10 transition-all duration-300" onClick={() => onVideoSelect(video)}>
-            <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-emerald-accent transition duration-300">{video.title}</h3>
-            <p className="text-gray-400 mb-6 leading-relaxed">{video.category}</p>
-            <button className="w-full bg-emerald-accent/10 border border-emerald-accent/20 text-emerald-accent py-3 rounded-full font-semibold group-hover:bg-emerald-accent group-hover:text-midnight transition-all duration-300">View Tutorial</button>
+          <div
+            key={video.video_id}
+            className="bg-gray-800 rounded-xl overflow-hidden cursor-pointer hover:bg-gray-700 transition"
+            onClick={() => onVideoSelect(video)}
+          >
+            {video.thumbnail_url && (
+              <img src={video.thumbnail_url} alt={video.title} className="w-full aspect-video object-cover" />
+            )}
+            <div className="p-6">
+              <h3 className="text-xl font-bold mb-2">{video.title}</h3>
+              <p className="text-sm text-gray-400 mb-4">{video.category}</p>
+              <button className="w-full bg-emerald-accent text-midnight py-2 rounded-lg font-semibold hover:bg-emerald-600 transition">
+                Get Tool
+              </button>
+            </div>
           </div>
         ))}
       </div>
