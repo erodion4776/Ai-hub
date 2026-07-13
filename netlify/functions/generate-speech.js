@@ -32,7 +32,7 @@ export async function handler(event) {
     }
 
     const supabase = createClient(
-      process.env.SUPABASE_URL,
+      process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY // server-only key, set in Netlify env vars
     );
 
