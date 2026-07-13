@@ -19,7 +19,7 @@ export async function handler(event) {
   }
 
   try {
-    const { text, deviceId } = JSON.parse(event.body || '{}');
+    const { text, deviceId, voiceId } = JSON.parse(event.body || '{}');
 
     if (!text || !text.trim()) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Text is required.' }) };
@@ -73,9 +73,10 @@ export async function handler(event) {
         transcript: text,
         voice: {
           mode: 'id',
-          // Default Cartesia demo voice. Swap for a voice ID from your own
-          // Cartesia dashboard/voice library if you want a specific voice.
-          id: 'a0e99841-438c-4a64-b679-ae501e7d6091',
+          // Uses whichever voice the user picked in the dropdown. Falls back to
+          // Cartesia's default demo voice if none was passed (e.g. old cached
+          // frontend build, or the voices list failed to load client-side).
+          id: voiceId || 'a0e99841-438c-4a64-b679-ae501e7d6091',
         },
         output_format: {
           container: 'mp3',
