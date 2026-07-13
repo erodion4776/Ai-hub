@@ -5,15 +5,15 @@
 // Also enforces a daily per-device limit using the tool_usage table, checked with
 // the Supabase service_role key (bypasses RLS, safe to use server-side only).
 //
-// Written as an ES module (import/export) because this project's package.json
-// has "type": "module", which makes Node treat all .js files as ESM — a
-// CommonJS require()/exports.handler version will crash before it even runs.
+// Written as an ES Module (import/export) because the root package.json has
+// "type": "module" — CommonJS require()/exports.handler here throws
+// "module is not defined in ES module scope".
 
 import { createClient } from '@supabase/supabase-js';
 
 const DAILY_LIMIT = 5; // adjust as you see fit
 
-export async function handler(event) {
+export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -60,7 +60,6 @@ export async function handler(event) {
       };
     }
 
-    // Call Cartesia
     const cartesiaRes = await fetch('https://api.cartesia.ai/tts/bytes', {
       method: 'POST',
       headers: {
@@ -73,9 +72,6 @@ export async function handler(event) {
         transcript: text,
         voice: {
           mode: 'id',
-          // Uses whichever voice the user picked in the dropdown. Falls back to
-          // Cartesia's default demo voice if none was passed (e.g. old cached
-          // frontend build, or the voices list failed to load client-side).
           id: voiceId || 'a0e99841-438c-4a64-b679-ae501e7d6091',
         },
         output_format: {
@@ -98,7 +94,6 @@ export async function handler(event) {
     const audioBuffer = await cartesiaRes.arrayBuffer();
     const audioBase64 = Buffer.from(audioBuffer).toString('base64');
 
-    // Increment usage count only after a successful generation
     await supabase.from('tool_usage').upsert({
       device_id: deviceId,
       tool_name: 'text_to_speech',
@@ -118,4 +113,4 @@ export async function handler(event) {
     console.error('generate-speech error:', err);
     return { statusCode: 500, body: JSON.stringify({ error: 'Unexpected server error.' }) };
   }
-}
+};
