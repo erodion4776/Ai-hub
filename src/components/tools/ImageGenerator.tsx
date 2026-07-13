@@ -43,10 +43,11 @@ export default function ImageGenerator() {
     setImageUrl(null);
 
     // Pollinations generates on-request via the image URL itself — no API key,
-    // no cost, no signup. A cache-busting seed avoids getting a stale cached image
-    // for the same prompt text.
+    // no cost, no signup, using the legacy image.pollinations.ai domain which
+    // remains the genuinely anonymous/free endpoint (the newer gen.pollinations.ai
+    // unified gateway now requires a bearer token for the same endpoint).
     const seed = Date.now();
-    const url = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?seed=${seed}&width=768&height=768&nologo=true`;
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&width=768&height=768&nologo=true`;
     setImageUrl(url);
     setUsedToday(incrementTodayUsage());
   }
