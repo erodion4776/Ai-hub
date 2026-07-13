@@ -2,8 +2,11 @@
 //
 // Fetches Cartesia's available voices so the frontend can show a picker.
 // Runs server-side because it needs CARTESIA_API_KEY.
+// Written as an ES Module (export, not exports.handler) because the root
+// package.json has "type": "module" — CommonJS syntax here throws
+// "module is not defined in ES module scope".
 
-exports.handler = async () => {
+export const handler = async () => {
   try {
     const res = await fetch('https://api.cartesia.ai/voices?language=en&limit=20', {
       headers: {
@@ -30,7 +33,6 @@ exports.handler = async () => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        // Voices list rarely changes — safe to cache in the browser for an hour.
         'Cache-Control': 'public, max-age=3600',
       },
       body: JSON.stringify({ voices }),
