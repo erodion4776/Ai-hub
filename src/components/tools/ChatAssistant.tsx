@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const DAILY_LIMIT = 30;
 const STORAGE_KEY = 'aihub_chat_usage';
@@ -102,13 +103,17 @@ export default function ChatAssistant() {
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-[80%] rounded-xl px-4 py-2 whitespace-pre-wrap ${
+              className={`max-w-[80%] rounded-xl px-4 py-2 ${
                 m.role === 'user'
-                  ? 'bg-emerald-accent text-midnight'
-                  : 'bg-gray-800 text-white'
+                  ? 'bg-emerald-accent text-midnight whitespace-pre-wrap'
+                  : 'bg-gray-800 text-white prose prose-invert prose-sm prose-emerald max-w-none'
               }`}
             >
-              {m.content}
+              {m.role === 'assistant' ? (
+                <ReactMarkdown>{m.content}</ReactMarkdown>
+              ) : (
+                m.content
+              )}
             </div>
           </div>
         ))}
