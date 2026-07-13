@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageIcon, Mic, Sparkles } from 'lucide-react';
+import { ImageIcon, Mic, MessageCircle, Sparkles } from 'lucide-react';
 
 interface ToolsHubProps {
   onToolSelect: (tool: string) => void;
@@ -18,6 +18,13 @@ const TOOLS = [
     name: 'Text to Speech',
     description: 'Natural-sounding voice from any text.',
     icon: Mic,
+    available: true,
+  },
+  {
+    id: 'chat-assistant',
+    name: 'AI Chat Assistant',
+    description: 'Ask questions, brainstorm, get quick help.',
+    icon: MessageCircle,
     available: true,
   },
   {
