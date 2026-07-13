@@ -12,8 +12,12 @@ import PremiumCTA from './components/PremiumCTA.tsx';
 import AuthModal from './components/AuthModal.tsx';
 import TutorialDetail from './components/TutorialDetail.tsx';
 import Roadmaps from './components/Roadmaps.tsx';
+import RoadmapDetail from './components/RoadmapDetail.tsx';
 import Blog from './components/Blog.tsx';
 import BlogDetail from './components/BlogDetail.tsx';
+import ToolsHub from './components/tools/ToolsHub.tsx';
+import ImageGenerator from './components/tools/ImageGenerator.tsx';
+import TextToSpeech from './components/tools/TextToSpeech.tsx';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -22,11 +26,12 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedRoadmap, setSelectedRoadmap] = useState<any>(null);
   const [selectedBlog, setSelectedBlog] = useState<any>(null);
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = getSupabase();
     if (!supabase) return;
-    
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
@@ -55,11 +60,34 @@ export default function App() {
     if (selectedBlog) {
       return <BlogDetail blog={selectedBlog} onBack={() => setSelectedBlog(null)} />;
     }
+    if (selectedTool) {
+      const backToHub = () => setSelectedTool(null);
+      switch (selectedTool) {
+        case 'image-generator':
+          return (
+            <div>
+              <button onClick={backToHub} className="ml-6 mt-6 text-gray-400 hover:text-white">&larr; Back to Tools</button>
+              <ImageGenerator />
+            </div>
+          );
+        case 'text-to-speech':
+          return (
+            <div>
+              <button onClick={backToHub} className="ml-6 mt-6 text-gray-400 hover:text-white">&larr; Back to Tools</button>
+              <TextToSpeech />
+            </div>
+          );
+        default:
+          return <ToolsHub onToolSelect={setSelectedTool} />;
+      }
+    }
     switch (currentPage) {
       case 'roadmaps':
         return <Roadmaps onRoadmapSelect={setSelectedRoadmap} />;
       case 'blog':
         return <Blog onBlogSelect={setSelectedBlog} />;
+      case 'tools':
+        return <ToolsHub onToolSelect={setSelectedTool} />;
       case 'home':
       default:
         return (
@@ -80,6 +108,7 @@ export default function App() {
         setSelectedVideo(null);
         setSelectedRoadmap(null);
         setSelectedBlog(null);
+        setSelectedTool(null);
       }} />
       {renderContent()}
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
