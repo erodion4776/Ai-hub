@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageIcon, Mic, MessageCircle, Sparkles } from 'lucide-react';
+import { ImageIcon, Mic, MessageCircle, Wand2, Sparkles } from 'lucide-react';
 
 interface ToolsHubProps {
   onToolSelect: (tool: string) => void;
@@ -25,6 +25,13 @@ const TOOLS = [
     name: 'AI Chat Assistant',
     description: 'Ask questions, brainstorm, get quick help.',
     icon: MessageCircle,
+    available: true,
+  },
+  {
+    id: 'prompt-generator',
+    name: 'Image & Video Prompt Generator',
+    description: 'Turn a simple idea into a detailed AI prompt.',
+    icon: Wand2,
     available: true,
   },
   {
