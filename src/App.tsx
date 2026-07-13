@@ -18,6 +18,7 @@ import BlogDetail from './components/BlogDetail.tsx';
 import ToolsHub from './components/tools/ToolsHub.tsx';
 import ImageGenerator from './components/tools/ImageGenerator.tsx';
 import TextToSpeech from './components/tools/TextToSpeech.tsx';
+import ChatAssistant from './components/tools/ChatAssistant.tsx';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -75,6 +76,13 @@ export default function App() {
             <div>
               <button onClick={backToHub} className="ml-6 mt-6 text-gray-400 hover:text-white">&larr; Back to Tools</button>
               <TextToSpeech />
+            </div>
+          );
+        case 'chat-assistant':
+          return (
+            <div>
+              <button onClick={backToHub} className="ml-6 mt-6 text-gray-400 hover:text-white">&larr; Back to Tools</button>
+              <ChatAssistant />
             </div>
           );
         default:
