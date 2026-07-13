@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getDeviceId } from '../../lib/deviceId.ts';
+
+interface Voice {
+  id: string;
+  name: string;
+  description?: string;
+  gender?: string;
+}
 
 export default function TextToSpeech() {
   const [text, setText] = useState('');
@@ -7,6 +14,29 @@ export default function TextToSpeech() {
   const [error, setError] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [voices, setVoices] = useState<Voice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<string>('');
+  const [voicesLoading, setVoicesLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchVoices() {
+      try {
+        const res = await fetch('/.netlify/functions/list-voices');
+        const data = await res.json();
+        if (res.ok && data.voices?.length) {
+          setVoices(data.voices);
+          setSelectedVoice(data.voices[0].id);
+        }
+      } catch (err) {
+        console.error('Failed to load voices:', err);
+        // Not fatal — generate-speech.js falls back to a default voice if
+        // selectedVoice is empty, so TTS still works without the picker.
+      } finally {
+        setVoicesLoading(false);
+      }
+    }
+    fetchVoices();
+  }, []);
 
   async function handleGenerate() {
     if (!text.trim()) return;
@@ -18,7 +48,7 @@ export default function TextToSpeech() {
       const res = await fetch('/.netlify/functions/generate-speech', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, deviceId: getDeviceId() }),
+        body: JSON.stringify({ text, deviceId: getDeviceId(), voiceId: selectedVoice }),
       });
 
       const data = await res.json();
@@ -43,6 +73,22 @@ export default function TextToSpeech() {
     <div className="max-w-2xl mx-auto py-12 px-6">
       <h1 className="text-4xl font-bold mb-2 text-white">Text to Speech</h1>
       <p className="text-gray-400 mb-8">Turn text into natural-sounding speech. Free, with a daily limit.</p>
+
+      <label className="block text-sm text-gray-400 mb-2">Voice</label>
+      <select
+        value={selectedVoice}
+        onChange={(e) => setSelectedVoice(e.target.value)}
+        disabled={voicesLoading || voices.length === 0}
+        className="w-full bg-gray-800 text-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-emerald-accent mb-6 disabled:opacity-50"
+      >
+        {voicesLoading && <option>Loading voices…</option>}
+        {!voicesLoading && voices.length === 0 && <option>Default voice</option>}
+        {voices.map((v) => (
+          <option key={v.id} value={v.id}>
+            {v.name}{v.gender ? ` (${v.gender})` : ''}
+          </option>
+        ))}
+      </select>
 
       <textarea
         value={text}
