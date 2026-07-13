@@ -4,12 +4,16 @@
 // CARTESIA_API_KEY is a paid credential — it can never be shipped to the browser.
 // Also enforces a daily per-device limit using the tool_usage table, checked with
 // the Supabase service_role key (bypasses RLS, safe to use server-side only).
+//
+// Written as an ES module (import/export) because this project's package.json
+// has "type": "module", which makes Node treat all .js files as ESM — a
+// CommonJS require()/exports.handler version will crash before it even runs.
 
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const DAILY_LIMIT = 5; // adjust as you see fit
 
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -113,4 +117,4 @@ exports.handler = async (event) => {
     console.error('generate-speech error:', err);
     return { statusCode: 500, body: JSON.stringify({ error: 'Unexpected server error.' }) };
   }
-};
+}
