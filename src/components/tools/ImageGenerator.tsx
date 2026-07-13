@@ -23,8 +23,8 @@ function incrementTodayUsage(): number {
   return next;
 }
 
-export default function ImageGenerator() {
-  const [prompt, setPrompt] = useState('');
+export default function ImageGenerator({ initialPrompt }: { initialPrompt?: string }) {
+  const [prompt, setPrompt] = useState(initialPrompt || '');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
