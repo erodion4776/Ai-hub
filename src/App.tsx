@@ -19,6 +19,7 @@ import ToolsHub from './components/tools/ToolsHub.tsx';
 import ImageGenerator from './components/tools/ImageGenerator.tsx';
 import TextToSpeech from './components/tools/TextToSpeech.tsx';
 import ChatAssistant from './components/tools/ChatAssistant.tsx';
+import PromptGenerator from './components/tools/PromptGenerator.tsx';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -28,6 +29,7 @@ export default function App() {
   const [selectedRoadmap, setSelectedRoadmap] = useState<any>(null);
   const [selectedBlog, setSelectedBlog] = useState<any>(null);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const [prefillImagePrompt, setPrefillImagePrompt] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const supabase = getSupabase();
@@ -68,7 +70,7 @@ export default function App() {
           return (
             <div>
               <button onClick={backToHub} className="ml-6 mt-6 text-gray-400 hover:text-white">&larr; Back to Tools</button>
-              <ImageGenerator />
+              <ImageGenerator initialPrompt={prefillImagePrompt} />
             </div>
           );
         case 'text-to-speech':
@@ -83,6 +85,18 @@ export default function App() {
             <div>
               <button onClick={backToHub} className="ml-6 mt-6 text-gray-400 hover:text-white">&larr; Back to Tools</button>
               <ChatAssistant />
+            </div>
+          );
+        case 'prompt-generator':
+          return (
+            <div>
+              <button onClick={backToHub} className="ml-6 mt-6 text-gray-400 hover:text-white">&larr; Back to Tools</button>
+              <PromptGenerator
+                onUseInImageGenerator={(prompt) => {
+                  setPrefillImagePrompt(prompt);
+                  setSelectedTool('image-generator');
+                }}
+              />
             </div>
           );
         default:
